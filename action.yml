@@ -1,0 +1,61 @@
+name: 'terraform_state_artifact_gcs'
+description: 'Sets up and runs Terraform, and creates a Terraform artifact, which is stored in GCS'
+author: 'Ronald Weening'
+inputs:
+  apply:
+    description: 'terraform apply'
+    required: false
+    default: true
+  destroy:
+    description: 'terraform destroy'
+    required: false
+    default: false
+  custom_plan_flags:
+    description: 'Add custom flags to the terraform plan command'
+    required: false
+    default: ''
+  custom_apply_flags:
+    description: 'Add custom flags to the terraform apply command'
+    required: false
+    default: ''
+  custom_destroy_flags:
+    description: 'Add custom flags to the terraform apply -destroy command'
+    required: false
+    default: ''
+  environment:
+    description: 'Add environment'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - uses: hashicorp/setup-terraform@v4
+    - id: terraform
+      run: |
+        # Initialize terraform
+        terraform init
+
+        $path = "./environments/${{ inputs.environment }}/main.tfvars"
+        Write-Host "Use tfvars file = $path for environment $environment"
+        $terraformapply = "${{ inputs.apply }}"
+        $terraformdestroy = "${{ inputs.destroy }}"
+
+        # Use plan if no apply or destroy action
+        if (($terraformapply -eq "false") -and ($terraformdestroy -eq "false")) {
+          $custom_plan_flags = "${{ inputs.custom_plan_flags }}"
+          terraform plan -var-file="$path" $custom_plan_flags
+        }
+        if ($terraformapply -eq "true") {
+          $custom_apply_flags = "${{ inputs.custom_apply_flags }}"
+          terraform apply -auto-approve -var-file="$path" $custom_apply_flags
+        }
+        if ($terraformdestroy -eq "true") {
+          $custom_destroy_flags = "${{ inputs.custom_destroy_flags }}"
+          terraform apply -destroy -auto-approve -var-file="$path" $custom_destroy_flags
+        }
+
+      shell: pwsh
+
+branding:
+  icon: 'cloud'
+  color: 'gray-dark'
