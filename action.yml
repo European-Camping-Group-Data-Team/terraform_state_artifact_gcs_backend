@@ -36,10 +36,8 @@ runs:
     - uses: hashicorp/setup-terraform@v4
     - id: terraform
       run: |
-        # Initialize terraform
-        $env:TF_BACKEND_BUCKET = "${{ inputs.bucket }}"
-        $env:TF_BACKEND_PREFIX="terraform/${{ github.repository }}/${{ inputs.environment }}"
-        terraform init
+        # Initialize terraform, set bucket and prefix variables
+        terraform init -backend-config="bucket=${{ inputs.bucket }}" -backend-config="prefix=terraform/${{ github.repository }}/${{ inputs.environment }}"
 
         $path = "./environments/${{ inputs.environment }}/main.tfvars"
         Write-Host "Use tfvars file = $path for environment $environment"
