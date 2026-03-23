@@ -37,7 +37,9 @@ runs:
     - id: terraform
       run: |
         $bucket = "${{ inputs.bucket }}"
-        $bucket = $bucket.trim()
+
+        # Remove all spaces
+        $bucket = $bucket -replace '\s',''
 
         # Empty bucket, use default
         if (($bucket -eq "") {
