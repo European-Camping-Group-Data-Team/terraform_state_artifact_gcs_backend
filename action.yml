@@ -36,8 +36,16 @@ runs:
     - uses: hashicorp/setup-terraform@v4
     - id: terraform
       run: |
+        $bucket = "${{ inputs.bucket }}"
+        $bucket = $bucket.trim()
+
+        # Empty bucket, use default
+        if (($bucket -eq "") {
+          $bucket = "github-terraform-artifacts-backend"
+        }
+
         # Initialize terraform, set bucket and prefix variables
-        terraform init -backend-config="bucket=${{ inputs.bucket }}" -backend-config="prefix=terraform/${{ github.repository }}/${{ inputs.environment }}"
+        terraform init -backend-config="bucket=$bucket" -backend-config="prefix=terraform/${{ github.repository }}/${{ inputs.environment }}"
 
         $path = "./environments/${{ inputs.environment }}/main.tfvars"
         Write-Host "Use tfvars file = $path for environment $environment"
