@@ -42,7 +42,7 @@ runs:
         $bucket = $bucket -replace '\s',''
 
         # Empty bucket, use default
-        if (($bucket -eq "") {
+        if ($bucket -eq "") {
           $bucket = "github-terraform-artifacts-backend"
         }
 
