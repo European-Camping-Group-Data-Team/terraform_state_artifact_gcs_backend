@@ -36,18 +36,19 @@ runs:
     - uses: hashicorp/setup-terraform@v4
     - id: terraform
       run: |
+        # Get input bucket and remove all spaces, if empty use default bucket
         $bucket = "${{ inputs.bucket }}"
-
-        # Remove all spaces
         $bucket = $bucket -replace '\s',''
 
         # Empty bucket, use default
         if ($bucket -eq "") {
           $bucket = "github-terraform-artifacts-backend"
         }
+        $prefix = "terraform/${{ github.repository }}/${{ inputs.environment }}"
+        Write-Host "Use bucket=$bucket with prefix=$prefix"
 
         # Initialize terraform, set bucket and prefix variables
-        terraform init -backend-config="bucket=$bucket" -backend-config="prefix=terraform/${{ github.repository }}/${{ inputs.environment }}"
+        terraform init -backend-config="bucket=$bucket" -backend-config="prefix=$prefix"
 
         $path = "./environments/${{ inputs.environment }}/main.tfvars"
         Write-Host "Use tfvars file = $path for environment $environment"
