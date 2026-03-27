@@ -2,6 +2,10 @@ name: 'terraform_state_artifact_gcs'
 description: 'Sets up and runs Terraform, and creates a Terraform artifact, which is stored in GCS'
 author: 'Ronald Weening'
 inputs:
+  upload:
+    description: 'upload state file'
+    required: false
+    default: ''
   apply:
     description: 'terraform apply'
     required: false
@@ -29,6 +33,9 @@ inputs:
     description: 'Terraform state file bucket'
     required: false
     default: 'github-terraform-artifacts-backend'
+  terraformuploadfile:
+    description: 'Terraformuploadfile name'
+    required: false
 
 runs:
   using: "composite"
@@ -36,6 +43,19 @@ runs:
     - uses: hashicorp/setup-terraform@v4
     - id: terraform
       run: |
+        $terraformupload = "${{ inputs.upload }}"
+        if ($terraformupload -eq "true") {
+          $terraformuploadfile = "${{ inputs.terraformuploadfile }}"
+          $environment = ${{ inputs.environment }}
+          $bucket = "${{ inputs.bucket }}"
+          $repo = "${{ github.repository }}"
+
+          Write-Host "Upload statefile ./state/$terraformuploadfile to gs://${bucket}/terraform/${repo}/$environment/default.tfstate"
+          gcloud storage cp --verbosity=none --no-user-output-enabled "./state/$terraformuploadfile" "gs://${bucket}/terraform/${repo}/$environment/default.tfstate"
+
+          exit 0
+        }
+
         # Get input bucket and remove all spaces, if empty use default bucket
         $bucket = "${{ inputs.bucket }}"
         $bucket = $bucket -replace '\s',''
