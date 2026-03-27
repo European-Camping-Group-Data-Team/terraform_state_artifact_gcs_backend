@@ -60,6 +60,7 @@ The action supports the following inputs:
 |-----------------|-----------------------------------------------------------------------------------------------------------------------------------------|---------|
 value.                                              |   N/A   |
 | `environment`         | Environment to use (dev, staging or prod).               | N/A  |
+| `upload`         | (optional) Upload a statefile to GCS.               | `false`  |
 | `apply`         | (optional) Whether to run the `terraform apply` command.               | `true`  |
 | `destroy`       | (optional) Whether to run the `terraform apply -destroy` command.               | `false`  |
 | `upload`         | (optional) Upload artifact file.               | `false`  |
