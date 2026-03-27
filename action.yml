@@ -51,7 +51,7 @@ runs:
           $repo = "${{ github.repository }}"
 
           Write-Host "Upload statefile ./state/$terraformuploadfile to gs://${bucket}/terraform/${repo}/$environment/default.tfstate"
-          gcloud storage cp --verbosity=none --no-user-output-enabled "./state/$terraformuploadfile" "gs://${bucket}/terraform/${repo}/$environment/default.tfstate"
+          gcloud storage cp --verbosity=none --no-user-output-enabled "./state/$terraformuploadfile" "gs://${bucket}/terraform/${repo}/$environment/default.tfstate" --content-type "text/plain; charset=utf-8"
 
           exit 0
         }
