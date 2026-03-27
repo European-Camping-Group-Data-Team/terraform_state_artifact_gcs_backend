@@ -1,4 +1,4 @@
-name: 'terraform_state_artifact_gcs'
+name: 'terraform_state_artifact_gcs_backend'
 description: 'Sets up and runs Terraform, and creates a Terraform artifact, which is stored in GCS'
 author: 'Ronald Weening'
 inputs:
