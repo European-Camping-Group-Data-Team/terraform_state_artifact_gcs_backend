@@ -46,7 +46,7 @@ runs:
         $terraformupload = "${{ inputs.upload }}"
         if ($terraformupload -eq "true") {
           $terraformuploadfile = "${{ inputs.terraformuploadfile }}"
-          $environment = ${{ inputs.environment }}
+          $environment = "${{ inputs.environment }}"
           $bucket = "${{ inputs.bucket }}"
           $repo = "${{ github.repository }}"
 
