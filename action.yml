@@ -43,19 +43,6 @@ runs:
     - uses: hashicorp/setup-terraform@v4
     - id: terraform
       run: |
-        $terraformupload = "${{ inputs.upload }}"
-        if ($terraformupload -eq "true") {
-          $terraformuploadfile = "${{ inputs.terraformuploadfile }}"
-          $environment = "${{ inputs.environment }}"
-          $bucket = "${{ inputs.bucket }}"
-          $repo = "${{ github.repository }}"
-
-          Write-Host "Upload statefile ./state/$terraformuploadfile to gs://${bucket}/terraform/${repo}/$environment/default.tfstate"
-          gcloud storage cp --verbosity=none --no-user-output-enabled "./state/$terraformuploadfile" "gs://${bucket}/terraform/${repo}/$environment/default.tfstate" --content-type "text/plain; charset=utf-8"
-
-          exit 0
-        }
-
         # Get input bucket and remove all spaces, if empty use default bucket
         $bucket = "${{ inputs.bucket }}"
         $bucket = $bucket -replace '\s',''
@@ -64,6 +51,19 @@ runs:
         if ($bucket -eq "") {
           $bucket = "github-terraform-artifacts-backend"
         }
+
+        $terraformupload = "${{ inputs.upload }}"
+        if ($terraformupload -eq "true") {
+          $terraformuploadfile = "${{ inputs.terraformuploadfile }}"
+          $environment = "${{ inputs.environment }}"
+          $repo = "${{ github.repository }}"
+
+          Write-Host "Upload statefile ./state/$terraformuploadfile to gs://${bucket}/terraform/${repo}/$environment/default.tfstate"
+          gcloud storage cp --verbosity=none --no-user-output-enabled "./state/$terraformuploadfile" "gs://${bucket}/terraform/${repo}/$environment/default.tfstate" --content-type "text/plain; charset=utf-8"
+
+          exit 0
+        }
+
         $prefix = "terraform/${{ github.repository }}/${{ inputs.environment }}"
         Write-Host "Use bucket=$bucket with prefix=$prefix"
 
